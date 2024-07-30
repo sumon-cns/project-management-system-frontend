@@ -14,11 +14,19 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth) && !localStorage.getItem('jwt')) {
+    if (to.matched.some(record => record.meta.requiresAuth) && !localStorage.getObject('loggedInUser')) {
         next('/login');
     } else {
         next();
     }
 });
+
+Storage.prototype.setObject = function (key, value) {
+    this.setItem(key, JSON.stringify(value));
+}
+
+Storage.prototype.getObject = function (key) {
+    return JSON.parse(this.getItem(key));
+}
 
 export default router;

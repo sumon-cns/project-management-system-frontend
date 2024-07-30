@@ -7,12 +7,17 @@
 </template>
 
 <script setup>
+import {onMounted} from "vue";
 import {useRouter} from 'vue-router';
+
+onMounted(() => {
+  console.log(localStorage.getObject('loggedInUser').token);
+});
 
 const router = useRouter();
 
 function handleLogout() {
-  localStorage.clear('jwt');
+  localStorage.clear('loggedInUser');
   router.push('/login');
 }
 </script>

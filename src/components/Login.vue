@@ -34,7 +34,7 @@ const errorMessage = ref('');
 const router = useRouter();
 
 onMounted(() => {
-  if (localStorage.getItem('jwt')) {
+  if (localStorage.getItem('loggedInUser')) {
     router.push('/');
   }
 })
@@ -42,8 +42,8 @@ onMounted(() => {
 const handleSubmit = async () => {
   try {
     const response = await axios.post('http://localhost:8080/api/v1/login', form.value);
-    const token = response.data;
-    localStorage.setItem('jwt', token);
+    const data = response.data;
+    localStorage.setObject('loggedInUser', data);
     router.push('/');
   } catch (error) {
     if (error.response.data) {
