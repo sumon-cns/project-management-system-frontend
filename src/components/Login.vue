@@ -13,6 +13,10 @@
       <button type="submit">Login</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
+    <p class="register-prompt">
+      Don't have an account yet?
+      <router-link to="/register">Register now</router-link>
+    </p>
   </div>
 </template>
 
@@ -92,5 +96,19 @@ button:hover {
 .error {
   color: red;
   margin-top: 10px;
+}
+
+.register-prompt {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.register-prompt a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-prompt a:hover {
+  text-decoration: underline;
 }
 </style>

@@ -21,6 +21,10 @@
       <button type="submit">Register</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
+    <p class="login-prompt">
+      Already have an account?
+      <router-link to="/login">Login</router-link>
+    </p>
   </div>
 </template>
 
@@ -43,7 +47,7 @@ const errorMessage = ref('');
 const handleSubmit = async () => {
   try {
     const response = await axios.post('http://localhost:8080/api/v1/register', form.value);
-    router.push('/login');
+    await router.push('/login');
   } catch (error) {
     console.error('Registration error:', error);
     if (error.response.data) {
@@ -96,5 +100,19 @@ button:hover {
 .error {
   color: red;
   margin-top: 10px;
+}
+
+.login-prompt {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.login-prompt a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
 }
 </style>
