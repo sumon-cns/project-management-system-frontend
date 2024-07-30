@@ -44,7 +44,7 @@ const handleSubmit = async () => {
     const response = await axios.post('http://localhost:8080/api/v1/login', form.value);
     const data = response.data;
     localStorage.setObject('loggedInUser', data);
-    router.push('/');
+    await router.push('/');
   } catch (error) {
     if (error.response.data) {
       errorMessage.value = error.response.data;
