@@ -1,21 +1,21 @@
 <template>
-  <div class="edit-project">
+  <div class="edit-project" v-if="project">
     <h1>Edit Project</h1>
     <form @submit.prevent="submitForm">
       <label for="name">Name:</label>
-      <input type="text" v-model="name" id="name" required/>
+      <input type="text" v-model="project.name" id="name" required/>
 
       <label for="intro">Intro:</label>
-      <textarea v-model="intro" id="intro" required></textarea>
+      <textarea v-model="project.intro" id="intro" required></textarea>
 
       <label for="startDate">Start Date:</label>
-      <input type="date" v-model="startDate" id="startDate" required/>
+      <input type="date" v-model="project.startDate" id="startDate" required/>
 
       <label for="endDate">End Date:</label>
-      <input type="date" v-model="endDate" id="endDate" required/>
+      <input type="date" v-model="project.endDate" id="endDate" required/>
 
       <label for="status">Status:</label>
-      <select v-model="status" id="status" required>
+      <select v-model="project.status" id="status" required>
         <option value="pre">Pre</option>
         <option value="start">Start</option>
         <option value="end">End</option>
@@ -28,33 +28,37 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
 
-const name = ref('');
-const intro = ref('');
-const startDate = ref('');
-const endDate = ref('');
-const status = ref('pre'); // Default status
+const project = ref({
+  name: '',
+  intro: '',
+  startDate: '',
+  endDate: '',
+  status: 'pre' // Default status
+});
+
 const route = useRoute();
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
 
 const fetchProject = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/projects/${route.params.id}`,
+    const response = await axios.get(
+        `http://localhost:8080/api/v1/projects/${route.params.id}`,
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
-    const project = response.data;
+    const data = response.data;
 
-    console.log('loaded single project:', project);
+    console.log('loaded single project:', data);
 
-    name.value = project.name;
-    intro.value = project.intro;
-    startDate.value = project.startDateTime !== null ? project.startDateTime.split('T')[0] : '';
-    endDate.value = project.endDateTime !== null ? project.endDateTime.split('T')[0] : '';
-    status.value = project.projectStatus || 'pre'; // Default to 'pre' if not defined
+    project.value.name = data.name;
+    project.value.intro = data.intro;
+    project.value.startDate = data.startDateTime ? data.startDateTime.split('T')[0] : '';
+    project.value.endDate = data.endDateTime ? data.endDateTime.split('T')[0] : '';
+    project.value.status = data.projectStatus || 'pre'; // Default to 'pre' if not defined
   } catch (error) {
     console.error('Error fetching project details:', error);
   }
@@ -65,11 +69,11 @@ const submitForm = async () => {
     await axios.put(
         `http://localhost:8080/api/v1/projects/${route.params.id}`,
         {
-          name: name.value,
-          intro: intro.value,
-          startDateTime: new Date(startDate.value).toISOString(),
-          endDateTime: new Date(endDate.value).toISOString(),
-          projectStatus: status.value, // Include status in the payload
+          name: project.value.name,
+          intro: project.value.intro,
+          startDateTime: new Date(project.value.startDate).toISOString(),
+          endDateTime: new Date(project.value.endDate).toISOString(),
+          projectStatus: project.value.status
         },
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
