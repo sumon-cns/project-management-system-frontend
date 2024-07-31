@@ -4,7 +4,6 @@
     <div v-if="project">
       <p><strong>Name:</strong> {{ project.name }}</p>
       <p><strong>Intro:</strong> {{ project.intro }}</p>
-      <p><strong>Owner ID:</strong> {{ project.ownerId }}</p>
       <p><strong>Status:</strong> {{ project.projectStatus }}</p>
       <p><strong>Start Date:</strong>
         {{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}
@@ -14,7 +13,7 @@
       </p>
     </div>
     <hr>
-    <div class="members-list">
+    <div class="members-list" v-if="project.members && project.members.length > 0">
       <h3>Members of this project: </h3>
       <table>
         <thead>
@@ -33,8 +32,8 @@
         </tbody>
       </table>
     </div>
-    <hr>
-    <div>
+
+    <div v-if="project.owner">
       <h3>Owner's info:</h3>
       <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
       <p><strong>Username:</strong> {{ project.owner.username }}</p>
