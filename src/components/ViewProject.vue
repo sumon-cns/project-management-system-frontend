@@ -1,5 +1,5 @@
 <template>
-  <div class="view-project">
+  <div v-if="project" class="view-project">
     <h1>Project Details</h1>
     <div v-if="project">
       <p><strong>Name:</strong> {{ project.name }}</p>
@@ -13,6 +13,34 @@
         {{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}
       </p>
     </div>
+    <hr>
+    <div class="members-list">
+      <h3>Members of this project: </h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="member in project.members" :key="member.username">
+          <td>{{ member.username }}</td>
+          <td>{{ member.fullName }}</td>
+          <td>{{ member.email }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr>
+    <div>
+      <h3>Owner's info:</h3>
+      <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
+      <p><strong>Username:</strong> {{ project.owner.username }}</p>
+      <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
+    </div>
+
     <button class="back-button" @click="goBack">Back</button>
   </div>
 </template>
@@ -22,7 +50,7 @@ import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
 
-const project = ref(null);
+const project = ref({});
 const route = useRoute();
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
@@ -33,6 +61,7 @@ const fetchProject = async () => {
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
     project.value = response.data;
+    console.log('loaded single project:', project.value);
   } catch (error) {
     console.error('Error fetching project details:', error);
   }
