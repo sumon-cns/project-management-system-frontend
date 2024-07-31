@@ -4,57 +4,70 @@
     <p>Welcome {{ user.username }}!</p>
     <button @click="handleLogout">Logout</button>
     <button @click="createNewProject">Create New Project</button>
-    <table>
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Intro</th>
-        <th v-if="false">Owner ID</th>
-        <th>Status</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="project in projects" :key="project.id">
-        <td>{{ project.id }}</td>
-        <td>{{ project.name }}</td>
-        <td>{{ project.intro }}</td>
-        <td v-if="false">{{ project.ownerId }}</td>
-        <td>{{ project.projectStatus }}</td>
-        <td>{{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}</td>
-        <td>{{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}</td>
-        <td>
-          <button @click="viewProject(project.id)">View</button>
-          <button v-if="user.id === project.ownerId" @click="editProject(project.id)">Edit</button>
-          <button v-if="user.id === project.ownerId" @click="deleteProject(project.id)">Delete</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+
+    <div class="table-container">
+
+      <div class="date-range-picker">
+        <input type="date" v-model="startDate" placeholder="Start Date"/>
+        <input type="date" v-model="endDate" placeholder="End Date"/>
+        <button @click="applyDateRange">Apply</button>
+      </div>
+
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Intro</th>
+          <th v-if="false">Owner ID</th>
+          <th>Status</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="project in projects" :key="project.id">
+          <td>{{ project.id }}</td>
+          <td>{{ project.name }}</td>
+          <td>{{ project.intro }}</td>
+          <td v-if="false">{{ project.ownerId }}</td>
+          <td>{{ project.projectStatus }}</td>
+          <td>{{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}</td>
+          <td>{{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}</td>
+          <td>
+            <button @click="viewProject(project.id)">View</button>
+            <button v-if="user.id === project.ownerId" @click="editProject(project.id)">Edit</button>
+            <button v-if="user.id === project.ownerId" @click="deleteProject(project.id)">Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
-
 <script setup>
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
+import moment from "moment";
 
 const projects = ref([]);
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
+
+const startDate = ref('');
+const endDate = ref('');
 
 function handleLogout() {
   localStorage.clear('loggedInUser');
   router.push('/login');
 }
 
-const fetchProjects = async () => {
+const fetchProjects = async (startDateParam = '', endDateParam = '') => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/users/${user.value.id}/projects/all`,
-        {headers: {"Authorization": `Bearer ${user.value.token}`}});
+    const url = `http://localhost:8080/api/v1/users/${user.value.id}/projects?fromDate=${startDateParam}&toDate=${endDateParam}`;
+    const response = await axios.get(url, {headers: {"Authorization": `Bearer ${user.value.token}`}});
     projects.value = response.data;
     console.log('loaded projects: ', response.data);
   } catch (error) {
@@ -78,16 +91,34 @@ const deleteProject = async (projectId) => {
   const isConfirmed = confirm('Are you sure you want to delete this project?');
   if (isConfirmed) {
     try {
-      await axios.delete(`http://localhost:8080/api/v1/projects/${projectId}`,
-          {headers: {"Authorization": `Bearer ${user.value.token}`}});
-      await fetchProjects();
+      await axios.delete(`http://localhost:8080/api/v1/projects/${projectId}`, {
+        headers: {"Authorization": `Bearer ${user.value.token}`}
+      });
+      await fetchProjects(startDate.value, endDate.value);
     } catch (error) {
       console.error('Error deleting project:', error);
     }
   }
 };
 
+const applyDateRange = () => {
+  const startDateIso = new Date(startDate.value).toISOString();
+  const endDateIso = new Date(endDate.value).toISOString();
+  fetchProjects(startDateIso, endDateIso);
+};
+
+const calculateCurrentMonthDates = () => {
+  // Use moment to get the first and last day of the current month
+  const firstDay = moment().startOf('month').format('YYYY-MM-DD');
+  const lastDay = moment().endOf('month').format('YYYY-MM-DD');
+
+  startDate.value = firstDay;
+  endDate.value = lastDay;
+};
+
+
 onMounted(() => {
+  calculateCurrentMonthDates();
   fetchProjects();
 });
 </script>
@@ -134,5 +165,22 @@ thead th {
   position: sticky;
   top: 0;
   background-color: #f4f4f4;
+}
+
+.date-range-picker {
+  /*position: absolute;
+  top: 0;
+  right: 0;*/
+  display: flex;
+  gap: 10px;
+  margin: 10px;
+}
+
+.date-range-picker input {
+  padding: 5px;
+}
+
+.date-range-picker button {
+  padding: 5px 10px;
 }
 </style>

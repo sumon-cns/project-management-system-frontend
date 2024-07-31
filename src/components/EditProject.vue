@@ -52,9 +52,9 @@ const fetchProject = async () => {
 
     name.value = project.name;
     intro.value = project.intro;
-    startDate.value = project.startDateTime.split('T')[0];
-    endDate.value = project.endDateTime.split('T')[0];
-    status.value = project.status || 'pre'; // Default to 'pre' if not defined
+    startDate.value = project.startDateTime !== null ? project.startDateTime.split('T')[0] : '';
+    endDate.value = project.endDateTime !== null ? project.endDateTime.split('T')[0] : '';
+    status.value = project.projectStatus || 'pre'; // Default to 'pre' if not defined
   } catch (error) {
     console.error('Error fetching project details:', error);
   }

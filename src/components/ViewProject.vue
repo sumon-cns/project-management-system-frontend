@@ -6,8 +6,12 @@
       <p><strong>Intro:</strong> {{ project.intro }}</p>
       <p><strong>Owner ID:</strong> {{ project.ownerId }}</p>
       <p><strong>Status:</strong> {{ project.projectStatus }}</p>
-      <p><strong>Start Date:</strong> {{ new Date(project.startDateTime).toLocaleDateString() }}</p>
-      <p><strong>End Date:</strong> {{ new Date(project.endDateTime).toLocaleDateString() }}</p>
+      <p><strong>Start Date:</strong>
+        {{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}
+      </p>
+      <p><strong>End Date:</strong>
+        {{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}
+      </p>
     </div>
     <button class="back-button" @click="goBack">Back</button>
   </div>
