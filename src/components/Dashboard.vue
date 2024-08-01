@@ -3,17 +3,19 @@
     <h1>Dashboard</h1>
     <p>Welcome {{ user.username }}!</p>
     <button @click="handleLogout">Logout</button>
-    <button @click="createNewProject">Create New Project</button>
+
 
     <div class="table-container">
-
-      <div class="date-range-picker">
-        <input type="date" v-model="startDate" placeholder="Start Date"/>
-        <input type="date" v-model="endDate" placeholder="End Date"/>
-        <button @click="applyDateRange">Apply</button>
+      <div style="display: flex; justify-content: end;">
+        <button @click="createNewProject">Create New Project</button>
+        <div class="date-range-picker">
+          <input type="date" v-model="startDate" placeholder="Start Date"/>
+          <input type="date" v-model="endDate" placeholder="End Date"/>
+          <button @click="applyDateRange">Apply</button>
+        </div>
+        <button @click="downloadReports">Download Report</button>
       </div>
 
-      <button @click="downloadReports">Download Report</button>
 
       <table>
         <thead>
@@ -212,7 +214,6 @@ thead th {
   right: 0;*/
   display: flex;
   gap: 10px;
-  margin: 10px;
 }
 
 .date-range-picker input {
