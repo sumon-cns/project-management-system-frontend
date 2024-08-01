@@ -13,6 +13,8 @@
         <button @click="applyDateRange">Apply</button>
       </div>
 
+      <button @click="downloadReports">Download Report</button>
+
       <table>
         <thead>
         <tr>
@@ -114,6 +116,30 @@ const calculateCurrentMonthDates = () => {
 
   startDate.value = firstDay;
   endDate.value = lastDay;
+};
+
+const downloadReports = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/v1/users/${user.value.id}/projects/report?fromDate=${new Date(startDate.value).toISOString()}&toDate=${new Date(endDate.value).toISOString()}`, {
+      responseType: 'blob',
+      headers: {"Authorization": `Bearer ${user.value.token}`}
+    });
+    const contentDisposition = response.headers['content-disposition'];
+    const filename = contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '');
+
+    const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}));
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+  }
 };
 
 
