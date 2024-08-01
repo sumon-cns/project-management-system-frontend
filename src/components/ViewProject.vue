@@ -41,6 +41,7 @@
     </div>
 
     <button class="back-button" @click="goBack">Back</button>
+    <Loader v-if="isLoading"/>
   </div>
 </template>
 
@@ -48,14 +49,17 @@
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
+import Loader from "./Loader.vue";
 
 const project = ref({});
 const route = useRoute();
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
+const isLoading = ref(false);
 
 const fetchProject = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.get(`http://localhost:8080/api/v1/projects/${route.params.id}`,
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
@@ -63,6 +67,8 @@ const fetchProject = async () => {
     console.log('loaded single project:', project.value);
   } catch (error) {
     console.error('Error fetching project details:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 

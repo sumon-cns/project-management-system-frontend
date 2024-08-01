@@ -72,6 +72,7 @@
       </div>
     </div>
     <button class="back-button" @click="goBack">Back</button>
+    <Loader v-if="isLoading"/>
   </div>
 </template>
 
@@ -79,6 +80,7 @@
 import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
+import Loader from "./Loader.vue";
 
 const project = ref({
   name: '',
@@ -93,9 +95,11 @@ const availableMembers = ref([]);
 const route = useRoute();
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
+const isLoading = ref(false);
 
 const fetchProject = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.get(
         `http://localhost:8080/api/v1/projects/${route.params.id}`,
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
@@ -114,11 +118,14 @@ const fetchProject = async () => {
   } catch (error) {
     alert(error.response.data);
     console.error('Error fetching project details:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const submitForm = async () => {
   try {
+    isLoading.value = true;
     await axios.put(
         `http://localhost:8080/api/v1/projects/${route.params.id}`,
         {
@@ -133,6 +140,8 @@ const submitForm = async () => {
     await router.push('/');
   } catch (error) {
     console.error('Error updating project:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -142,6 +151,7 @@ const goBack = () => {
 
 const loadAvailableMembers = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.get(
         `http://localhost:8080/api/v1/projects/${route.params.id}/available-users`,
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
@@ -150,11 +160,14 @@ const loadAvailableMembers = async () => {
     console.log('available members: ', response);
   } catch (err) {
     alert('Error fetching available members for this project');
+  } finally {
+    isLoading.value = false;
   }
 }
 
 const addUser = async (id) => {
   try {
+    isLoading.value = true;
     await axios.put(
         `http://localhost:8080/api/v1/projects/${route.params.id}/users`,
         [id],
@@ -165,17 +178,28 @@ const addUser = async (id) => {
   } catch (error) {
     alert(error.response.data || 'Error adding user');
     console.error('Error adding user:', error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
 onMounted(async () => {
-  await fetchProject();
-  await loadAvailableMembers();
+  try {
+    isLoading.value = true;
+    await fetchProject();
+    await loadAvailableMembers();
 
-  if (project.value.ownerId !== user.value.id) {
-    alert("You are not allowed to edit this project.");
-    await router.push('/');
+    if (project.value.ownerId !== user.value.id) {
+      alert("You are not allowed to edit this project.");
+      await router.push('/');
+    }
+
+  } catch (err) {
+    console.log('failed to load projects & available members')
+  } finally {
+    isLoading.value = false;
   }
+
 });
 </script>
 
