@@ -103,7 +103,7 @@ const deleteProject = async (projectId) => {
       await axios.delete(`http://localhost:8080/api/v1/projects/${projectId}`, {
         headers: {"Authorization": `Bearer ${user.value.token}`}
       });
-      await fetchProjects(startDate.value, endDate.value);
+      await fetchProjects(new Date(startDate.value).toISOString(), new Date(endDate.value).toISOString());
     } catch (error) {
       console.error('Error deleting project:', error);
     } finally {
