@@ -52,7 +52,7 @@ const submitForm = async () => {
           intro: intro.value,
           ownerId: user.value.id,
           projectStatus: projectStatus.value,
-          startDateTime: new Date(startDate.value).toISOString(),
+          startDateTime: startDate.value ? new Date(startDate.value).toISOString() : null,
           endDateTime: new Date(endDate.value).toISOString(),
         },
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
