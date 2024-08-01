@@ -46,6 +46,7 @@
         </tbody>
       </table>
     </div>
+    <Loader v-if="isLoading"/>
   </div>
 </template>
 <script setup>
@@ -53,10 +54,12 @@ import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
 import moment from "moment";
+import Loader from "./Loader.vue";
 
 const projects = ref([]);
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
+const isLoading = ref(false);
 
 const startDate = ref('');
 const endDate = ref('');
@@ -68,12 +71,15 @@ function handleLogout() {
 
 const fetchProjects = async (startDateParam = '', endDateParam = '') => {
   try {
+    isLoading.value = true;
     const url = `http://localhost:8080/api/v1/users/${user.value.id}/projects?fromDate=${startDateParam}&toDate=${endDateParam}`;
     const response = await axios.get(url, {headers: {"Authorization": `Bearer ${user.value.token}`}});
     projects.value = response.data;
     console.log('loaded projects: ', response.data);
   } catch (error) {
     console.error('Error fetching projects:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -90,6 +96,7 @@ const editProject = (projectId) => {
 };
 
 const deleteProject = async (projectId) => {
+  isLoading.value = true;
   const isConfirmed = confirm('Are you sure you want to delete this project?');
   if (isConfirmed) {
     try {
@@ -99,8 +106,11 @@ const deleteProject = async (projectId) => {
       await fetchProjects(startDate.value, endDate.value);
     } catch (error) {
       console.error('Error deleting project:', error);
+    } finally {
+      isLoading.value = false;
     }
   }
+  isLoading.value = false;
 };
 
 const applyDateRange = () => {
@@ -120,6 +130,7 @@ const calculateCurrentMonthDates = () => {
 
 const downloadReports = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.get(`http://localhost:8080/api/v1/users/${user.value.id}/projects/report?fromDate=${new Date(startDate.value).toISOString()}&toDate=${new Date(endDate.value).toISOString()}`, {
       responseType: 'blob',
       headers: {"Authorization": `Bearer ${user.value.token}`}
@@ -139,6 +150,8 @@ const downloadReports = async () => {
     window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error('Error downloading PDF:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
