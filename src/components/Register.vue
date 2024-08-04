@@ -25,6 +25,7 @@
       Already have an account?
       <router-link to="/login">Login</router-link>
     </p>
+    <Loader v-if="isLoading"/>
   </div>
 </template>
 
@@ -32,6 +33,7 @@
 import {ref} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
+import Loader from "./Loader.vue";
 
 const router = useRouter();
 
@@ -42,19 +44,24 @@ const form = ref({
   password: ''
 });
 
+const isLoading = ref(false);
+
 const errorMessage = ref('');
 
 const handleSubmit = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.post('http://localhost:8080/api/v1/register', form.value);
     await router.push('/login');
   } catch (error) {
     console.error('Registration error:', error);
-    if (error.response.data) {
+    if (error.response && error.response.data) {
       errorMessage.value = error.response.data;
     } else {
-      errorMessage.value = 'Registration failed. Please try again.';
+      errorMessage.value = 'Registration failed. Please try again later.';
     }
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
