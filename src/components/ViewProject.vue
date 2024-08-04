@@ -66,6 +66,7 @@ const fetchProject = async () => {
     project.value = response.data;
     console.log('loaded single project:', project.value);
   } catch (error) {
+    alert(error.response && error.response.data || 'Error fetching project! Please try again');
     console.error('Error fetching project details:', error);
   } finally {
     isLoading.value = false;

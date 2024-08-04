@@ -139,6 +139,7 @@ const submitForm = async () => {
     );
     await router.push('/');
   } catch (error) {
+    alert(error.response && error.response.data || 'Error updating project! Please try again');
     console.error('Error updating project:', error);
   } finally {
     isLoading.value = false;
@@ -176,7 +177,7 @@ const addUser = async (id) => {
     await fetchProject();
     await loadAvailableMembers();
   } catch (error) {
-    alert(error.response.data || 'Error adding user');
+    alert(error.response && error.response.data || 'Error adding user');
     console.error('Error adding user:', error);
   } finally {
     isLoading.value = false;

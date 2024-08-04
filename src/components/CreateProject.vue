@@ -59,6 +59,7 @@ const submitForm = async () => {
     );
     await router.push('/');
   } catch (error) {
+    alert(error.response && error.response.data || 'Error creating project! Please try again');
     console.error('Error creating project:', error);
   }
 };
