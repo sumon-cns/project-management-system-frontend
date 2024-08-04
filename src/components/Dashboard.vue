@@ -4,6 +4,10 @@
     <p>Welcome {{ user.username }}!</p>
     <button @click="handleLogout">Logout</button>
 
+    <router-link class="users-from-api" to="/users-from-api">
+      Users from api
+    </router-link>
+
 
     <div class="table-container">
       <div style="display: flex; justify-content: end;">
@@ -223,5 +227,9 @@ thead th {
 
 .date-range-picker button {
   padding: 5px 10px;
+}
+
+.users-from-api {
+  text-decoration: none;
 }
 </style>

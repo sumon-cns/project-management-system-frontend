@@ -5,6 +5,7 @@ import Register from '../components/Register.vue';
 import CreateProject from "../components/CreateProject.vue";
 import ViewProject from "../components/ViewProject.vue";
 import EditProject from "../components/EditProject.vue";
+import UsersFromApi from "../components/UsersFromApi.vue";
 
 const routes = [
     {path: '/login', component: Login, meta: {requiresAuth: false}},
@@ -13,6 +14,7 @@ const routes = [
     {path: '/create-project', component: CreateProject, meta: {requiresAuth: true}},
     {path: '/projects/:id', component: ViewProject, meta: {requiresAuth: true}},
     {path: '/edit-project/:id', component: EditProject, meta: {requiresAuth: true}},
+    {path: '/users-from-api', component: UsersFromApi, meta: {requiresAuth: true}},
 
 ];
 
