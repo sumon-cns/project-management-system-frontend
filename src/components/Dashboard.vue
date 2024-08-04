@@ -79,6 +79,7 @@ const fetchProjects = async (startDateParam = '', endDateParam = '') => {
     projects.value = response.data;
     console.log('loaded projects: ', response.data);
   } catch (error) {
+    alert(error.response && error.response.data || 'Error fetching projects!');
     console.error('Error fetching projects:', error);
   } finally {
     isLoading.value = false;
