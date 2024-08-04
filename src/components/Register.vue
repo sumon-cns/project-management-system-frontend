@@ -18,6 +18,10 @@
         <label for="password">Password</label>
         <input v-model="form.password" type="password" id="password" required/>
       </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input v-model="confirmPassword" type="password" id="confirmPassword" required/>
+      </div>
       <button type="submit">Register</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
@@ -30,7 +34,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
 import Loader from "./Loader.vue";
@@ -44,12 +48,16 @@ const form = ref({
   password: ''
 });
 
+const confirmPassword = ref('');
 const isLoading = ref(false);
-
 const errorMessage = ref('');
 
 const handleSubmit = async () => {
   try {
+    if (form.value.password !== confirmPassword.value) {
+      errorMessage.value = 'Passwords do not match';
+      return;
+    }
     isLoading.value = true;
     const response = await axios.post('http://localhost:8080/api/v1/register', form.value);
     await router.push('/login');
@@ -64,6 +72,23 @@ const handleSubmit = async () => {
     isLoading.value = false;
   }
 };
+
+watch(confirmPassword, () => {
+  if (confirmPassword.value === form.value.password) {
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = 'Passwords do not match';
+  }
+});
+
+watch(() => form.value.password, () => {
+  if (confirmPassword.value === form.value.password) {
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = 'Passwords do not match';
+  }
+});
+
 </script>
 
 <style scoped>
