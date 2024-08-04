@@ -46,10 +46,10 @@ const handleSubmit = async () => {
     localStorage.setObject('loggedInUser', data);
     await router.push('/');
   } catch (error) {
-    if (error.response.data) {
+    if (error.response && error.response.data) {
       errorMessage.value = error.response.data;
     } else {
-      errorMessage.value = 'Login failed. Please check your credentials and try again.';
+      errorMessage.value = 'Login failed. Please try again.';
     }
   }
 };
