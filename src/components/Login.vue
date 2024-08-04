@@ -17,13 +17,15 @@
       Don't have an account yet?
       <router-link to="/register">Register now</router-link>
     </p>
+    <Loader v-if="isLoading"/>
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
+import Loader from "./Loader.vue";
 
 const form = ref({
   username: '',
@@ -32,6 +34,7 @@ const form = ref({
 
 const errorMessage = ref('');
 const router = useRouter();
+const isLoading = ref(false);
 
 onMounted(() => {
   if (localStorage.getItem('loggedInUser')) {
@@ -41,6 +44,7 @@ onMounted(() => {
 
 const handleSubmit = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.post('http://localhost:8080/api/v1/login', form.value);
     const data = response.data;
     localStorage.setObject('loggedInUser', data);
@@ -49,8 +53,10 @@ const handleSubmit = async () => {
     if (error.response && error.response.data) {
       errorMessage.value = error.response.data;
     } else {
-      errorMessage.value = 'Login failed. Please try again.';
+      errorMessage.value = 'Login failed. Please try again later.';
     }
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
