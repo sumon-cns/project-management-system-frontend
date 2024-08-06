@@ -31,8 +31,8 @@
         </tr>
         </tbody>
       </table>
+      <hr>
     </div>
-    <hr>
 
     <div v-if="project.owner">
       <h3>Owner's info:</h3>

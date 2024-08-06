@@ -49,8 +49,8 @@
         </tr>
         </tbody>
       </table>
+      <hr>
     </div>
-    <hr>
     <div class="available-members-list" v-if="availableMembers">
       <h3>Available Members to add to this project: </h3>
       <table>
