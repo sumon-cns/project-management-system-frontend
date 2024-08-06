@@ -23,53 +23,58 @@
 
       <button class="submit-button" type="submit">Update Project</button>
     </form>
-    <div class="add-members">
-      <div class="members-list" v-if="project.members && project.members.length > 0">
-        <h3>Members of this project: </h3>
-        <table>
-          <thead>
-          <tr>
-            <th>Username</th>
-            <th>Full Name</th>
-            <th>Email</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="member in project.members" :key="member.username">
-            <td>{{ member.username }}</td>
-            <td>{{ member.fullName }}</td>
-            <td>{{ member.email }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <div class="members-list" v-if="availableMembers">
-          <h3>Available Members to add to this project: </h3>
-          <table>
-            <thead>
-            <tr>
-              <th>ID</th>
-              <th>Username</th>
-              <th>Full Name</th>
-              <th>Email</th>
-              <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="member in availableMembers" :key="member.username">
-              <td>{{ member.id }}</td>
-              <td>{{ member.username }}</td>
-              <td>{{ member.fullName }}</td>
-              <td>{{ member.email }}</td>
-              <td>
-                <button @click="addUser(member.id)">Add</button>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div v-if="project.owner">
+      <h3>Owner's info:</h3>
+      <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
+      <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
+      <p><strong>Username:</strong> {{ project.owner.username }}</p>
+      <p><strong>Email:</strong> {{ project.owner.email }}</p>
+    </div>
+    <hr>
+    <div class="members-list" v-if="project.members && project.members.length > 0">
+      <h3>Members of this project: </h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="member in project.members" :key="member.username">
+          <td>{{ member.username }}</td>
+          <td>{{ member.fullName }}</td>
+          <td>{{ member.email }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr>
+    <div class="available-members-list" v-if="availableMembers">
+      <h3>Available Members to add to this project: </h3>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="member in availableMembers" :key="member.username">
+          <td>{{ member.id }}</td>
+          <td>{{ member.username }}</td>
+          <td>{{ member.fullName }}</td>
+          <td>{{ member.email }}</td>
+          <td>
+            <button @click="addUser(member.id)">Add</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
     <button class="back-button" @click="goBack">Back</button>
     <Loader v-if="isLoading"/>
@@ -90,6 +95,7 @@ const project = ref({
   status: 'pre',
   members: [],
   ownerId: 0,
+  owner: null
 });
 const availableMembers = ref([]);
 const route = useRoute();
@@ -115,6 +121,7 @@ const fetchProject = async () => {
     project.value.status = data.projectStatus;
     project.value.members = data.members;
     project.value.ownerId = data.ownerId;
+    project.value.owner = data.owner;
   } catch (error) {
     alert(error.response.data);
     console.error('Error fetching project details:', error);
