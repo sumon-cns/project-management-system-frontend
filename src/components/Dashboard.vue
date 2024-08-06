@@ -137,6 +137,10 @@ const calculateCurrentMonthDates = () => {
 
 const downloadReports = async () => {
   try {
+    if (projects.value.length === 0) {
+      alert('No projects found to download report as PDF!');
+      return;
+    }
     isLoading.value = true;
     const response = await axios.get(`http://localhost:8080/api/v1/users/${user.value.id}/projects/report?fromDate=${new Date(startDate.value).toISOString()}&toDate=${new Date(endDate.value).toISOString()}`, {
       responseType: 'blob',
@@ -156,6 +160,7 @@ const downloadReports = async () => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   } catch (error) {
+    alert(error.response && error.response.data || 'Error downloading project report')
     console.error('Error downloading PDF:', error);
   } finally {
     isLoading.value = false;
