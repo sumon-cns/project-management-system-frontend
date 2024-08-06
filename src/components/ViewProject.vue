@@ -35,9 +35,10 @@
 
     <div v-if="project.owner">
       <h3>Owner's info:</h3>
+      <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
       <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
       <p><strong>Username:</strong> {{ project.owner.username }}</p>
-      <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
+      <p><strong>Email:</strong> {{ project.owner.email }}</p>
     </div>
 
     <button class="back-button" @click="goBack">Back</button>
