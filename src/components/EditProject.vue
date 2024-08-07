@@ -53,28 +53,13 @@
     </div>
     <div class="available-members-list" v-if="availableMembers">
       <h3>Available Members to add to this project: </h3>
-      <table>
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Username</th>
-          <th>Full Name</th>
-          <th>Email</th>
-          <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="member in availableMembers" :key="member.username">
-          <td>{{ member.id }}</td>
-          <td>{{ member.username }}</td>
-          <td>{{ member.fullName }}</td>
-          <td>{{ member.email }}</td>
-          <td>
-            <button @click="addUser(member.id)">Add</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+      <select v-model="currentlySelectedMember">
+        <option value="">Please Select One</option>
+        <option v-for="member in availableMembers" :key="member.id" :value="member.id">
+          {{ member.username }} - {{ member.fullName }}
+        </option>
+      </select>
+      <button class="submit-button" @click="addUser">Add Member</button>
     </div>
     <button class="back-button" @click="goBack">Back</button>
     <Loader v-if="isLoading"/>
@@ -104,6 +89,7 @@ const route = useRoute();
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
 const isLoading = ref(false);
+const currentlySelectedMember = ref('');
 
 const fetchProject = async () => {
   try {
@@ -178,14 +164,20 @@ const loadAvailableMembers = async () => {
   }
 }
 
-const addUser = async (id) => {
+const addUser = async () => {
+  if (!currentlySelectedMember.value) {
+    toast("Please select a member to add.");
+    return;
+  }
   try {
     isLoading.value = true;
     await axios.put(
         `http://localhost:8080/api/v1/projects/${route.params.id}/users`,
-        [id],
+        [currentlySelectedMember.value],
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
+    currentlySelectedMember.value = '';
+    toast("Successfully added member!");
     await fetchProject();
     await loadAvailableMembers();
   } catch (error) {
