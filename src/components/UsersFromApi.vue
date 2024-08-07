@@ -59,9 +59,9 @@ onMounted(async () => {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  /* border: 1px solid #ddd;
+   border-radius: 8px;
+   background-color: #f9f9f9;*/
 }
 
 .back-button {
