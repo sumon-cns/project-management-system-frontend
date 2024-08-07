@@ -26,6 +26,8 @@ import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
 import Loader from "./Loader.vue";
+import {toast} from "vue3-toastify";
+import 'vue3-toastify/dist/index.css';
 
 const form = ref({
   username: '',
@@ -50,6 +52,7 @@ const handleSubmit = async () => {
     localStorage.setObject('loggedInUser', data);
     await router.push('/');
   } catch (error) {
+    toast(error.response && error.response.data || "Login failed. Please try again later.");
     if (error.response && error.response.data) {
       errorMessage.value = error.response.data;
     } else {

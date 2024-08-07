@@ -86,6 +86,8 @@ import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
 import Loader from "./Loader.vue";
+import 'vue3-toastify/dist/index.css';
+import {toast} from "vue3-toastify";
 
 const project = ref({
   name: '',
@@ -123,7 +125,7 @@ const fetchProject = async () => {
     project.value.ownerId = data.ownerId;
     project.value.owner = data.owner;
   } catch (error) {
-    alert(error.response.data);
+    toast(error.response && error.response.data || "Error fetching project.");
     console.error('Error fetching project details:', error);
   } finally {
     isLoading.value = false;
@@ -144,9 +146,11 @@ const submitForm = async () => {
         },
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
-    await router.push('/');
+    toast("Successfully updated project!");
+    // await router.push('/');
   } catch (error) {
-    alert(error.response && error.response.data || 'Error updating project! Please try again');
+    // alert(error.response && error.response.data || 'Error updating project! Please try again');
+    toast(error.response && error.response.data || 'Error updating project! Please try again');
     console.error('Error updating project:', error);
   } finally {
     isLoading.value = false;
@@ -166,8 +170,9 @@ const loadAvailableMembers = async () => {
     );
     availableMembers.value = response.data;
     console.log('available members: ', response);
-  } catch (err) {
-    alert('Error fetching available members for this project');
+  } catch (error) {
+    // alert('Error fetching available members for this project');
+    toast(error.response && error.response.data || 'Error fetching available members for this project.');
   } finally {
     isLoading.value = false;
   }
@@ -184,7 +189,8 @@ const addUser = async (id) => {
     await fetchProject();
     await loadAvailableMembers();
   } catch (error) {
-    alert(error.response && error.response.data || 'Error adding user');
+    // alert(error.response && error.response.data || 'Error adding user');
+    toast(error.response && error.response.data || 'Error adding user');
     console.error('Error adding user:', error);
   } finally {
     isLoading.value = false;
@@ -202,8 +208,8 @@ onMounted(async () => {
       await router.push('/');
     }
 
-  } catch (err) {
-    console.log('failed to load projects & available members')
+  } catch (error) {
+    console.log('failed to load projects & available members');
   } finally {
     isLoading.value = false;
   }

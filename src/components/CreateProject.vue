@@ -25,7 +25,7 @@
       <button class="submit-button" type="submit">Create Project</button>
     </form>
     <button class="back-button" @click="goBack">Back</button>
-
+    <Loader v-if="isLoading"/>
   </div>
 </template>
 
@@ -33,18 +33,23 @@
 import {ref} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
+import 'vue3-toastify/dist/index.css';
+import {toast} from "vue3-toastify";
+import Loader from "./Loader.vue";
 
 const name = ref('');
 const intro = ref('');
 const startDate = ref('');
 const endDate = ref('');
 const projectStatus = ref('');
+const isLoading = ref(false);
 
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
 
 const submitForm = async () => {
   try {
+    isLoading.value = true;
     await axios.post(
         'http://localhost:8080/api/v1/projects',
         {
@@ -57,14 +62,22 @@ const submitForm = async () => {
         },
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
-    await router.push('/');
+    toast("Successfully created project!");
+    name.value = '';
+    intro.value = '';
+    projectStatus.value = '';
+    startDate.value = '';
+    endDate.value = '';
+    // await router.push('/');
   } catch (error) {
-    alert(error.response && error.response.data || 'Error creating project! Please try again');
+    toast(error.response && error.response.data || 'Error creating project! Please try again');
     console.error('Error creating project:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 const goBack = () => {
-  router.back(); // Navigate back to the previous page
+  router.back();
 };
 </script>
 <style scoped>

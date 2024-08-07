@@ -38,6 +38,8 @@ import {ref, watch} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
 import Loader from "./Loader.vue";
+import 'vue3-toastify/dist/index.css';
+import {toast} from "vue3-toastify";
 
 const router = useRouter();
 
@@ -60,8 +62,15 @@ const handleSubmit = async () => {
     }
     isLoading.value = true;
     const response = await axios.post('http://localhost:8080/api/v1/register', form.value);
-    await router.push('/login');
+    toast("Registration successful, you may login now.");
+    //await router.push('/login');
+    form.value.fullName = '';
+    form.value.email = '';
+    form.value.username = '';
+    form.value.password = '';
+    confirmPassword.value = '';
   } catch (error) {
+    toast(error.response && error.response.data || "Registration failed. Please try again later.")
     console.error('Registration error:', error);
     if (error.response && error.response.data) {
       errorMessage.value = error.response.data;

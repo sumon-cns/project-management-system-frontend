@@ -56,11 +56,13 @@
   </div>
 </template>
 <script setup>
-import {ref, onMounted} from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRouter} from 'vue-router';
 import moment from "moment";
 import Loader from "./Loader.vue";
+import {toast} from "vue3-toastify";
+import 'vue3-toastify/dist/index.css';
 
 const projects = ref([]);
 const router = useRouter();
@@ -83,7 +85,7 @@ const fetchProjects = async (startDateParam = '', endDateParam = '') => {
     projects.value = response.data;
     console.log('loaded projects: ', response.data);
   } catch (error) {
-    alert(error.response && error.response.data || 'Error fetching projects!');
+    toast(error.response && error.response.data || 'Error fetching projects!');
     console.error('Error fetching projects:', error);
   } finally {
     isLoading.value = false;
@@ -111,7 +113,9 @@ const deleteProject = async (projectId) => {
         headers: {"Authorization": `Bearer ${user.value.token}`}
       });
       await fetchProjects(new Date(startDate.value).toISOString(), new Date(endDate.value).toISOString());
+      toast("Successfully deleted project!");
     } catch (error) {
+      toast(error.response && error.response.data || "Error deleting project.")
       console.error('Error deleting project:', error);
     } finally {
       isLoading.value = false;
@@ -138,7 +142,7 @@ const calculateCurrentMonthDates = () => {
 const downloadReports = async () => {
   try {
     if (projects.value.length === 0) {
-      alert('No projects found to download report as PDF!');
+      toast('No projects found to download report as PDF!');
       return;
     }
     isLoading.value = true;
@@ -160,7 +164,7 @@ const downloadReports = async () => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   } catch (error) {
-    alert(error.response && error.response.data || 'Error downloading project report')
+    toast(error.response && error.response.data || 'Error downloading project report')
     console.error('Error downloading PDF:', error);
   } finally {
     isLoading.value = false;
