@@ -1,28 +1,31 @@
 <template>
-  <div class="container">
-    <button @click="router.back()" class="back-button">Back</button>
-    <p class="title">Users from API:</p>
-    <table class="user-table">
-      <thead>
-      <tr>
-        <th>Avatar</th>
-        <th>ID</th>
-        <th>Email</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="user in users" :key="user.id">
-        <td><img :src="user.avatar" :alt="'avatar for user ' + user.id" class="avatar"></td>
-        <td>{{ user.id }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.first_name }}</td>
-        <td>{{ user.last_name }}</td>
-      </tr>
-      </tbody>
-    </table>
-    <Loader v-if="isLoading"/>
+  <div>
+    <Sidebar/>
+    <div class="container content">
+<!--      <button @click="router.back()" class="back-button">Back</button>-->
+      <p class="title">Users from API:</p>
+      <table class="user-table">
+        <thead>
+        <tr>
+          <th>Avatar</th>
+          <th>ID</th>
+          <th>Email</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="user in users" :key="user.id">
+          <td><img :src="user.avatar" :alt="'avatar for user ' + user.id" class="avatar"></td>
+          <td>{{ user.id }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.last_name }}</td>
+        </tr>
+        </tbody>
+      </table>
+      <Loader v-if="isLoading"/>
+    </div>
   </div>
 </template>
 
@@ -31,6 +34,7 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
 import Loader from "./Loader.vue";
+import Sidebar from "./Sidebar.vue";
 
 const router = useRouter();
 const users = ref([]);
@@ -53,11 +57,12 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style>
+
 .container {
   font-family: Arial, sans-serif;
   max-width: 800px;
-  margin: 20px auto;
+  margin: 0 auto;
   padding: 20px;
   /* border: 1px solid #ddd;
    border-radius: 8px;

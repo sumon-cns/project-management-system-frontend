@@ -1,68 +1,71 @@
 <template>
-  <div class="edit-project" v-if="project">
-    <h1>Edit Project</h1>
-    <form @submit.prevent="submitForm">
-      <label for="name">Name:</label>
-      <input type="text" v-model="project.name" id="name" required/>
+  <div>
+    <Sidebar/>
+    <div class="edit-project" v-if="project">
+      <h1>Edit Project</h1>
+      <form @submit.prevent="submitForm">
+        <label for="name">Name:</label>
+        <input type="text" v-model="project.name" id="name" required/>
 
-      <label for="intro">Intro:</label>
-      <textarea v-model="project.intro" id="intro" required></textarea>
+        <label for="intro">Intro:</label>
+        <textarea v-model="project.intro" id="intro" required></textarea>
 
-      <label for="startDate">Start Date:</label>
-      <input type="date" v-model="project.startDate" id="startDate"/>
+        <label for="startDate">Start Date:</label>
+        <input type="date" v-model="project.startDate" id="startDate"/>
 
-      <label for="endDate">End Date:</label>
-      <input type="date" v-model="project.endDate" id="endDate" required/>
+        <label for="endDate">End Date:</label>
+        <input type="date" v-model="project.endDate" id="endDate" required/>
 
-      <label for="status">Status:</label>
-      <select v-model="project.status" id="status" required>
-        <option value="pre">Pre</option>
-        <option value="start">Start</option>
-        <option value="end">End</option>
-      </select>
+        <label for="status">Status:</label>
+        <select v-model="project.status" id="status" required>
+          <option value="pre">Pre</option>
+          <option value="start">Start</option>
+          <option value="end">End</option>
+        </select>
 
-      <button class="submit-button" type="submit">Update Project</button>
-    </form>
-    <div v-if="project.owner">
-      <h3>Owner's info:</h3>
-      <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
-      <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
-      <p><strong>Username:</strong> {{ project.owner.username }}</p>
-      <p><strong>Email:</strong> {{ project.owner.email }}</p>
-    </div>
-    <hr>
-    <div class="members-list" v-if="project.members && project.members.length > 0">
-      <h3>Members of this project: </h3>
-      <table>
-        <thead>
-        <tr>
-          <th>Username</th>
-          <th>Full Name</th>
-          <th>Email</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="member in project.members" :key="member.username">
-          <td>{{ member.username }}</td>
-          <td>{{ member.fullName }}</td>
-          <td>{{ member.email }}</td>
-        </tr>
-        </tbody>
-      </table>
+        <button class="submit-button" type="submit">Update Project</button>
+      </form>
+      <div v-if="project.owner">
+        <h3>Owner's info:</h3>
+        <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
+        <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
+        <p><strong>Username:</strong> {{ project.owner.username }}</p>
+        <p><strong>Email:</strong> {{ project.owner.email }}</p>
+      </div>
       <hr>
+      <div class="members-list" v-if="project.members && project.members.length > 0">
+        <h3>Members of this project: </h3>
+        <table>
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Email</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="member in project.members" :key="member.username">
+            <td>{{ member.username }}</td>
+            <td>{{ member.fullName }}</td>
+            <td>{{ member.email }}</td>
+          </tr>
+          </tbody>
+        </table>
+        <hr>
+      </div>
+      <div class="available-members-list" v-if="availableMembers">
+        <h3>Available Members to add to this project: </h3>
+        <select v-model="currentlySelectedMember">
+          <option value="">Please Select One</option>
+          <option v-for="member in availableMembers" :key="member.id" :value="member.id">
+            {{ member.username }} - {{ member.fullName }}
+          </option>
+        </select>
+        <button class="submit-button" @click="addUser">Add Member</button>
+      </div>
+      <button v-if="false" class="back-button" @click="goBack">Back</button>
+      <Loader v-if="isLoading"/>
     </div>
-    <div class="available-members-list" v-if="availableMembers">
-      <h3>Available Members to add to this project: </h3>
-      <select v-model="currentlySelectedMember">
-        <option value="">Please Select One</option>
-        <option v-for="member in availableMembers" :key="member.id" :value="member.id">
-          {{ member.username }} - {{ member.fullName }}
-        </option>
-      </select>
-      <button class="submit-button" @click="addUser">Add Member</button>
-    </div>
-    <button class="back-button" @click="goBack">Back</button>
-    <Loader v-if="isLoading"/>
   </div>
 </template>
 
@@ -73,6 +76,7 @@ import {useRoute, useRouter} from 'vue-router';
 import Loader from "./Loader.vue";
 import 'vue3-toastify/dist/index.css';
 import {toast} from "vue3-toastify";
+import Sidebar from "./Sidebar.vue";
 
 const project = ref({
   name: '',

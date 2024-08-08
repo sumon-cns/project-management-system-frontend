@@ -1,31 +1,34 @@
 <template>
-  <div class="create-project">
-    <h1>Create New Project</h1>
-    <form @submit.prevent="submitForm">
-      <label for="name">Name:</label>
-      <input type="text" v-model="name" id="name" required/>
+  <div>
+    <Sidebar/>
+    <div class="create-project content">
+      <h1>Create New Project</h1>
+      <form @submit.prevent="submitForm">
+        <label for="name">Name:</label>
+        <input type="text" v-model="name" id="name" required/>
 
-      <label for="intro">Intro:</label>
-      <textarea v-model="intro" id="intro" required></textarea>
+        <label for="intro">Intro:</label>
+        <textarea v-model="intro" id="intro" required></textarea>
 
-      <label for="status">Status:</label>
-      <select id="status" required v-model="projectStatus">
-        <option value="">Select One</option>
-        <option value="pre">Pre</option>
-        <option value="start">Start</option>
-        <option value="end">End</option>
-      </select>
+        <label for="status">Status:</label>
+        <select id="status" required v-model="projectStatus">
+          <option value="">Select One</option>
+          <option value="pre">Pre</option>
+          <option value="start">Start</option>
+          <option value="end">End</option>
+        </select>
 
-      <label for="startDate">Start Date:</label>
-      <input type="date" v-model="startDate" id="startDate"/>
+        <label for="startDate">Start Date:</label>
+        <input type="date" v-model="startDate" id="startDate"/>
 
-      <label for="endDate">End Date:</label>
-      <input type="date" v-model="endDate" id="endDate" required/>
+        <label for="endDate">End Date:</label>
+        <input type="date" v-model="endDate" id="endDate" required/>
 
-      <button class="submit-button" type="submit">Create Project</button>
-    </form>
-    <button class="back-button" @click="goBack">Back</button>
-    <Loader v-if="isLoading"/>
+        <button class="submit-button" type="submit">Create Project</button>
+      </form>
+      <button v-if="false" class="back-button" @click="goBack">Back</button>
+      <Loader v-if="isLoading"/>
+    </div>
   </div>
 </template>
 
@@ -36,6 +39,7 @@ import {useRouter} from 'vue-router';
 import 'vue3-toastify/dist/index.css';
 import {toast} from "vue3-toastify";
 import Loader from "./Loader.vue";
+import Sidebar from "./Sidebar.vue";
 
 const name = ref('');
 const intro = ref('');
@@ -150,5 +154,17 @@ const goBack = () => {
 
 .back-button:hover {
   background-color: #5a6268;
+}
+
+@media screen and (max-width: 1050px) {
+  .create-project {
+    margin-left: 200px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .create-project {
+    margin-left: 0;
+  }
 }
 </style>

@@ -1,58 +1,61 @@
 <template>
-  <div class="dashboard">
-    <h1>Dashboard</h1>
-    <p>Welcome {{ user.username }}!</p>
-    <button @click="handleLogout">Logout</button>
-
-    <router-link class="users-from-api" to="/users-from-api">
-      Users from api
-    </router-link>
-
-
-    <div class="table-container">
-      <div style="display: flex; justify-content: end;">
-        <button @click="createNewProject">Create New Project</button>
-        <div class="date-range-picker">
-          <input type="date" v-model="startDate" placeholder="Start Date"/>
-          <input type="date" v-model="endDate" placeholder="End Date"/>
-          <button @click="applyDateRange">Apply</button>
-        </div>
-        <button @click="downloadReports">Download Report</button>
+  <div>
+    <Sidebar/>
+    <div class="dashboard content">
+      <div>
+        <h1 class="dashboard-title">Dashboard</h1>
+        <p><strong>Welcome </strong>{{ user.username }}!</p>
+        <p><strong>Id:</strong> {{ user.id }}</p>
+        <p><strong>Full Name:</strong> {{ user.fullName }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <button v-if="false" @click="handleLogout">Logout</button>
       </div>
 
+      <div class="table-container">
+        <div style="display: flex; justify-content: end;">
+          <button @click="createNewProject">Create New Project</button>
+          <div class="date-range-picker">
+            <input type="date" v-model="startDate" placeholder="Start Date"/>
+            <input type="date" v-model="endDate" placeholder="End Date"/>
+            <button @click="applyDateRange">Apply</button>
+          </div>
+          <button @click="downloadReports">Download Report</button>
+        </div>
 
-      <table>
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Intro</th>
-          <th v-if="false">Owner ID</th>
-          <th>Status</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="project in projects" :key="project.id">
-          <td>{{ project.id }}</td>
-          <td>{{ project.name }}</td>
-          <td>{{ project.intro }}</td>
-          <td v-if="false">{{ project.ownerId }}</td>
-          <td>{{ project.projectStatus }}</td>
-          <td>{{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}</td>
-          <td>{{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}</td>
-          <td>
-            <button @click="viewProject(project.id)">View</button>
-            <button v-if="user.id === project.ownerId" @click="editProject(project.id)">Edit</button>
-            <button v-if="user.id === project.ownerId" @click="deleteProject(project.id)">Delete</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+
+        <table>
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Intro</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="project in projects" :key="project.id">
+            <td>{{ project.id }}</td>
+            <td>{{ project.name }}</td>
+            <td>{{ project.intro }}</td>
+            <td>{{ project.owner.username }}</td>
+            <td>{{ project.projectStatus }}</td>
+            <td>{{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}</td>
+            <td>{{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}</td>
+            <td>
+              <button @click="viewProject(project.id)">View</button>
+              <button v-if="user.id === project.ownerId" @click="editProject(project.id)">Edit</button>
+              <button v-if="user.id === project.ownerId" @click="deleteProject(project.id)">Delete</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <Loader v-if="isLoading"/>
     </div>
-    <Loader v-if="isLoading"/>
   </div>
 </template>
 <script setup>
@@ -63,6 +66,7 @@ import moment from "moment";
 import Loader from "./Loader.vue";
 import {toast} from "vue3-toastify";
 import 'vue3-toastify/dist/index.css';
+import Sidebar from "./Sidebar.vue";
 
 const projects = ref([]);
 const router = useRouter();
@@ -142,7 +146,7 @@ const calculateCurrentMonthDates = () => {
 const downloadReports = async () => {
   try {
     if (projects.value.length === 0) {
-      toast('No projects found to download report as PDF!');
+      toast('No project found to download report as PDF!');
       return;
     }
     isLoading.value = true;
@@ -179,6 +183,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-title {
+  margin-bottom: 8px;
+}
+
 .dashboard {
   padding: 20px;
 }
@@ -236,9 +249,5 @@ thead th {
 
 .date-range-picker button {
   padding: 5px 10px;
-}
-
-.users-from-api {
-  text-decoration: none;
 }
 </style>

@@ -1,57 +1,63 @@
 <template>
-  <div v-if="project" class="view-project">
-    <h1>Project Details</h1>
-    <div v-if="project">
-      <p><strong>Name:</strong> {{ project.name }}</p>
-      <p><strong>Intro:</strong> {{ project.intro }}</p>
-      <p><strong>Status:</strong> {{ project.projectStatus }}</p>
-      <p><strong>Start Date:</strong>
-        {{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}
-      </p>
-      <p><strong>End Date:</strong>
-        {{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}
-      </p>
-    </div>
-    <hr>
-    <div class="members-list" v-if="project.members && project.members.length > 0">
-      <h3>Members of this project: </h3>
-      <table>
-        <thead>
-        <tr>
-          <th>Username</th>
-          <th>Full Name</th>
-          <th>Email</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="member in project.members" :key="member.username">
-          <td>{{ member.username }}</td>
-          <td>{{ member.fullName }}</td>
-          <td>{{ member.email }}</td>
-        </tr>
-        </tbody>
-      </table>
+  <div>
+    <Sidebar/>
+    <div v-if="project" class="view-project content">
+      <h1>Project Details</h1>
+      <div v-if="project">
+        <p><strong>Name:</strong> {{ project.name }}</p>
+        <p><strong>Intro:</strong> {{ project.intro }}</p>
+        <p><strong>Status:</strong> {{ project.projectStatus }}</p>
+        <p><strong>Start Date:</strong>
+          {{ project.startDateTime === null ? "--" : new Date(project.startDateTime).toDateString() }}
+        </p>
+        <p><strong>End Date:</strong>
+          {{ project.endDateTime === null ? "--" : new Date(project.endDateTime).toDateString() }}
+        </p>
+      </div>
       <hr>
-    </div>
+      <div class="members-list" v-if="project.members && project.members.length > 0">
+        <h3>Members of this project: </h3>
+        <table>
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Email</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="member in project.members" :key="member.username">
+            <td>{{ member.username }}</td>
+            <td>{{ member.fullName }}</td>
+            <td>{{ member.email }}</td>
+          </tr>
+          </tbody>
+        </table>
+        <hr>
+      </div>
 
-    <div v-if="project.owner">
-      <h3>Owner's info:</h3>
-      <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
-      <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
-      <p><strong>Username:</strong> {{ project.owner.username }}</p>
-      <p><strong>Email:</strong> {{ project.owner.email }}</p>
-    </div>
+      <div v-if="project.owner">
+        <h3>Owner's info:</h3>
+        <p><strong>Owner ID:</strong> {{ project.owner.id }}</p>
+        <p><strong>Name:</strong> {{ project.owner.fullName }}</p>
+        <p><strong>Username:</strong> {{ project.owner.username }}</p>
+        <p><strong>Email:</strong> {{ project.owner.email }}</p>
+      </div>
 
-    <button class="back-button" @click="goBack">Back</button>
-    <Loader v-if="isLoading"/>
+      <button v-if="false" class="back-button" @click="goBack">Back</button>
+      <Loader v-if="isLoading"/>
+    </div>
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import {useRoute, useRouter} from 'vue-router';
 import Loader from "./Loader.vue";
+import Sidebar from "./Sidebar.vue";
+import {toast} from "vue3-toastify";
+import 'vue3-toastify/dist/index.css';
 
 const project = ref({});
 const route = useRoute();
@@ -68,7 +74,7 @@ const fetchProject = async () => {
     project.value = response.data;
     console.log('loaded single project:', project.value);
   } catch (error) {
-    alert(error.response && error.response.data || 'Error fetching project! Please try again');
+    toast(error.response && error.response.data || 'Error fetching project! Please try again');
     console.error('Error fetching project details:', error);
   } finally {
     isLoading.value = false;
