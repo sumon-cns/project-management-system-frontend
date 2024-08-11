@@ -63,9 +63,10 @@
                      searchable
                      mode="tags"
                      placeholder="Please Select One"
-                     :options="availableMembers.map(member => ({value: member.id, label: member.username }))"/>
+                     :options="availableMembers.map(member => (
+                         {value: member.id, label: member.username + ' - ' + member.fullName }))"/>
         <br>
-        <button class="submit-button" @click="addUser">Add Member</button>
+        <button class="submit-button" @click="addUser">Add Member(s)</button>
       </div>
       <button v-if="false" class="back-button" @click="goBack">Back</button>
       <Loader v-if="isLoading"/>
@@ -166,6 +167,7 @@ const loadAvailableMembers = async () => {
     availableMembers.value = response.data;
     console.log('available members: ', response);
   } catch (error) {
+    await router.push('/');
     // alert('Error fetching available members for this project');
     toast(error.response && error.response.data || 'Error fetching available members for this project.');
   } finally {
@@ -222,9 +224,9 @@ onMounted(async () => {
     await fetchProject();
     await loadAvailableMembers();
 
-    if (project.value.ownerId !== user.value.id) {
-      alert("You are not allowed to edit this project.");
+    if (project.value.ownerId && project.value.ownerId !== user.value.id) {
       await router.push('/');
+      toast("You are not allowed to edit this project.");
     }
 
   } catch (error) {
