@@ -22,7 +22,7 @@
         <label for="confirmPassword">Confirm Password</label>
         <input v-model="confirmPassword" type="password" id="confirmPassword" required/>
       </div>
-      <button type="submit">Register</button>
+      <button type="submit" style="width: 100%">Register</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
     <p class="login-prompt">
@@ -103,10 +103,14 @@ watch(() => form.value.password, () => {
 <style scoped>
 .registration-form {
   max-width: 400px;
-  margin: auto;
+  margin: 5px auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
+}
+
+.registration-form h1 {
+  text-align: center;
 }
 
 .form-group {

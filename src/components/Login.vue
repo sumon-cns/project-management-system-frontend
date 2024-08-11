@@ -10,7 +10,7 @@
         <label for="password">Password</label>
         <input v-model="form.password" type="password" id="password" required/>
       </div>
-      <button type="submit">Login</button>
+      <button type="submit" style="width: 100%">Login</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
     <p class="register-prompt">
@@ -67,10 +67,14 @@ const handleSubmit = async () => {
 <style scoped>
 .login-form {
   max-width: 400px;
-  margin: auto;
+  margin: 5px auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
+}
+
+.login-form h1 {
+  text-align: center;
 }
 
 .form-group {
