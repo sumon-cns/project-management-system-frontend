@@ -41,6 +41,7 @@
             <th>Username</th>
             <th>Full Name</th>
             <th>Email</th>
+            <th>Action</th>
           </tr>
           </thead>
           <tbody>
@@ -48,6 +49,9 @@
             <td>{{ member.username }}</td>
             <td>{{ member.fullName }}</td>
             <td>{{ member.email }}</td>
+            <td>
+              <button @click="removeMember(member.id)">Remove</button>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -182,7 +186,7 @@ const addUser = async () => {
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
     currentlySelectedMember.value = [];
-    toast("Successfully added member!");
+    toast("Successfully added member(s)!");
     await fetchProject();
     await loadAvailableMembers();
   } catch (error) {
@@ -193,6 +197,24 @@ const addUser = async () => {
     isLoading.value = false;
   }
 }
+
+const removeMember = async (userId) => {
+  try {
+    isLoading.value = true;
+    await axios.delete(
+        `http://localhost:8080/api/v1/projects/${route.params.id}/users/${userId}`,
+        {headers: {"Authorization": `Bearer ${user.value.token}`}}
+    );
+    toast("Successfully removed member!");
+    await fetchProject();
+    await loadAvailableMembers();
+  } catch (error) {
+    toast(error.response && error.response.data || 'Error removing user');
+    console.error('Error removing user:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 onMounted(async () => {
   try {
