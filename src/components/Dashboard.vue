@@ -3,7 +3,8 @@
     <Sidebar/>
     <div class="dashboard content">
       <div>
-        <h1 class="dashboard-title">Dashboard</h1>
+        <h1 class="dashboard-title">Dashboard - Project Management System</h1>
+        <br>
         <p><strong>Welcome </strong>{{ user.username }}!</p>
         <p><strong>Id:</strong> {{ user.id }}</p>
         <p><strong>Full Name:</strong> {{ user.fullName }}</p>

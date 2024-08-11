@@ -4,6 +4,8 @@
 
 <script setup></script>
 
-<style scoped>
-
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
 </style>
