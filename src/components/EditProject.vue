@@ -55,12 +55,12 @@
       </div>
       <div class="available-members-list" v-if="availableMembers">
         <h3>Available Members to add to this project: </h3>
-        <select v-model="currentlySelectedMember">
-          <option value="">Please Select One</option>
-          <option v-for="member in availableMembers" :key="member.id" :value="member.id">
-            {{ member.username }} - {{ member.fullName }}
-          </option>
-        </select>
+        <Multiselect v-model="currentlySelectedMember"
+                     searchable
+                     mode="tags"
+                     placeholder="Please Select One"
+                     :options="availableMembers.map(member => ({value: member.id, label: member.username }))"/>
+        <br>
         <button class="submit-button" @click="addUser">Add Member</button>
       </div>
       <button v-if="false" class="back-button" @click="goBack">Back</button>
@@ -77,6 +77,7 @@ import Loader from "./Loader.vue";
 import 'vue3-toastify/dist/index.css';
 import {toast} from "vue3-toastify";
 import Sidebar from "./Sidebar.vue";
+import Multiselect from "@vueform/multiselect";
 
 const project = ref({
   name: '',
@@ -93,7 +94,7 @@ const route = useRoute();
 const router = useRouter();
 const user = ref({...localStorage.getObject('loggedInUser')});
 const isLoading = ref(false);
-const currentlySelectedMember = ref('');
+const currentlySelectedMember = ref([]);
 
 const fetchProject = async () => {
   try {
@@ -169,18 +170,18 @@ const loadAvailableMembers = async () => {
 }
 
 const addUser = async () => {
-  if (!currentlySelectedMember.value) {
-    toast("Please select a member to add.");
+  if (!currentlySelectedMember.value || !currentlySelectedMember.value.length) {
+    toast("Please select one or more member(s) to add.");
     return;
   }
   try {
     isLoading.value = true;
     await axios.put(
         `http://localhost:8080/api/v1/projects/${route.params.id}/users`,
-        [currentlySelectedMember.value],
+        currentlySelectedMember.value,
         {headers: {"Authorization": `Bearer ${user.value.token}`}}
     );
-    currentlySelectedMember.value = '';
+    currentlySelectedMember.value = [];
     toast("Successfully added member!");
     await fetchProject();
     await loadAvailableMembers();
@@ -286,3 +287,5 @@ onMounted(async () => {
   background-color: #5a6268;
 }
 </style>
+
+<style src="@vueform/multiselect/themes/default.css"></style>
