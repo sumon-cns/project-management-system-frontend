@@ -51,6 +51,7 @@ const handleSubmit = async () => {
     const data = response.data;
     localStorage.setObject('loggedInUser', data);
     await router.push('/');
+    toast("Successfully logged in!");
   } catch (error) {
     toast(error.response && error.response.data || "Login failed. Please try again later.");
     if (error.response && error.response.data) {

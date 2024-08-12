@@ -16,12 +16,15 @@
 
 <script setup>
 import {useRouter} from "vue-router";
+import {toast} from "vue3-toastify";
+import 'vue3-toastify/dist/index.css';
 
 const router = useRouter();
 
-const handleLogout = () => {
-  localStorage.clear();
-  router.push('/login');
+const handleLogout = async () => {
+  localStorage.removeItem('loggedInUser');
+  await router.push('/login');
+  toast("Successfully logged out!");
 };
 </script>
 
