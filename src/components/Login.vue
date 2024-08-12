@@ -1,6 +1,7 @@
 <template>
   <div class="login-form">
-    <h1>Login</h1>
+    <h1>Project Management System</h1>
+    <h2 style="text-align: center">Login</h2>
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
         <label for="username">Username</label>
